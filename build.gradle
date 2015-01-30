@@ -1,4 +1,12 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+allprojects {
+    group = 'net.christophersnow'
+    version = '0.0.1-SNAPSHOT'
+    description = """cloudant-sync-p2p"""
+}
 
 repositories {
     mavenLocal()
