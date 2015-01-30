@@ -2,8 +2,10 @@
 http listener to support p2p on sync-android
 
 check out sync-android
-```git clone https://github.com/cloudant/sync-android```
-```cd sync-android```
+```
+git clone https://github.com/cloudant/sync-android
+cd sync-android
+```
 
 we need the lastest sync-android libraries, so
 install 0.9.4-SNAPSHOT install ~/.m2 repository
