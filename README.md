@@ -1,7 +1,9 @@
 # sync-android-p2p
 This project implements a http listener on top of sync-android to allow sync-android to become a replication target.
 
-This project is a prototype.  It can perform a basic replication based on the steps below.  A lot more functionality needs to be implemented to support replication proper.  Also expect lots of bugs, this code needs much more testing.
+This project is a prototype.  It can perform a basic replication based on the steps below, however, a lot more functionality needs to be implemented to support replication proper.  In theory this code should work on Android, but this has not been tried yet.
+
+Expect lots of bugs, this code needs much more testing.
 
 - check out sync-android
 ```
