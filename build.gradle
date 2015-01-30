@@ -33,5 +33,5 @@ task execute(type:JavaExec) {
    classpath sourceSets.main.runtimeClasspath 
    //systemProperties [ "sqlite4java.library.path": "../native" ]
    systemProperty 'sqlite4java.library.path','native'
-   systemProperty 'DB_DIR', '/Users/snowch/Desktop/datastores'
+   systemProperty 'DB_DIR', System.getProperty("DB_DIR")
 }
