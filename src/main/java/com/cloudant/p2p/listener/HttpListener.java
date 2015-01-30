@@ -2,6 +2,7 @@ package com.cloudant.p2p.listener;
 
 import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.cloudant.sync.datastore.Datastore;
+import com.cloudant.sync.datastore.DatastoreExtended;
 import com.cloudant.sync.datastore.DatastoreManager;
 import com.cloudant.sync.datastore.DocumentBody;
 import com.cloudant.sync.datastore.DocumentBodyFactory;
@@ -87,10 +88,10 @@ public class HttpListener extends ServerResource {
             return handleRevsDiff(dbname);
         }
         else if (path.endsWith("/_ensure_full_commit")) {
-            return handleEnsureFullCommitGet(dbname);
+            return handleEnsureFullCommitPost(dbname);
         }
         else if (path.endsWith("/_bulk_docs")) {
-            return handleBulkDocsGet(dbname);
+            return handleBulkDocsPost(dbname);
         }
         else {
             throw new RuntimeException("Shouldn't have reached here");
@@ -287,7 +288,7 @@ public class HttpListener extends ServerResource {
         return requestJson;
     }
 
-    private Representation handleEnsureFullCommitGet(String dbname) {
+    private Representation handleEnsureFullCommitPost(String dbname) {
         // http://docs.couchdb.org/en/latest/replication/protocol.html#ensure-in-commit
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("instance_start_time", getInstanceStartTime(dbname));
@@ -306,7 +307,7 @@ public class HttpListener extends ServerResource {
         return newList;
     }
 
-    private Representation handleBulkDocsGet(String dbname) {
+    private Representation handleBulkDocsPost(String dbname) {
         // http://docs.couchdb.org/en/latest/replication/protocol.html#upload-batch-of-changed-documents
 
         Datastore ds = manager.openDatastore(dbname);
@@ -343,23 +344,13 @@ public class HttpListener extends ServerResource {
             builder.setRevId(revId);
             builder.setBody(body);
 
-            MutableDocumentRevision rev = new MutableDocumentRevision();
-            rev.docId = docId;
-            rev.body = DocumentBodyFactory.create(doc);
+            BasicDocumentRevision rev = builder.buildLocalDocument();
 
 //            System.out.println("rev: " + rev);
 //            System.out.println("revisionHistoryList: " + revisionHistoryList);
 //            System.out.println("body: " + body);
 
-            DocumentRevision revision;
-            try {
-                if (!ds.containsDocument(docId, revId)) {
-                    revision = ds.createDocumentFromRevision(rev);
-                }
-            } catch (Exception e) {
-                // skip for now
-                // how to return a failed write?
-            }
+            ((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, false);
 
             // TODO
             // how do we get the status of the forceInsert command for creating the response json?
