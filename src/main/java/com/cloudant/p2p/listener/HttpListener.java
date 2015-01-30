@@ -289,14 +289,13 @@ public class HttpListener extends ServerResource {
 
     private Representation handleEnsureFullCommitGet(String dbname) {
         // http://docs.couchdb.org/en/latest/replication/protocol.html#ensure-in-commit
-        String body =
-                "{\n" +
-                "  \"instance_start_time\": \"" + getInstanceStartTime(dbname) + "\",\n" +
-                "  \"ok\": true\n" +
-                "}";
-        System.out.println(body);
+        Map<String, Object> response = new HashMap<String, Object>();
+        response.put("instance_start_time", getInstanceStartTime(dbname));
+        response.put("ok", true);
+        String responseBody = JSONUtils.serializeAsString(response);
+        //System.out.println(responseBody);
         getResponse().setStatus(Status.SUCCESS_CREATED);
-        return new StringRepresentation(body, MediaType.APPLICATION_JSON);
+        return new StringRepresentation(responseBody, MediaType.APPLICATION_JSON);
     }
 
     private List<String> appendRevisionSequence(List<String> revisionHistory, int startRevision) {
