@@ -63,4 +63,4 @@ make sure our document 12345 was replicated
 ```
 echo 'select * from docs;' | sqlite3 /tmp/datastores/mydb/db.sync
 ```
-Example output: `1|12334'
+Example output: `1|12334`
