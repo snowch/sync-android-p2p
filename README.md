@@ -28,6 +28,8 @@ execute this project
 ```
 gradle execute -DDB_DIR=/tmp/datastores/
 ```
+Example output: `> Building 75% > :execute`
+
 
 in another terminal window start couchDB
 ```
@@ -39,7 +41,7 @@ create a database on couchdb
 curl -X PUT http://localhost:5984/newdb
 ```
 
-add a document
+add a document to couchdb
 ```
 curl -X POST -H 'Content-Type:application/json' -d '
 {
@@ -48,7 +50,7 @@ curl -X POST -H 'Content-Type:application/json' -d '
 ```
 
 
-start replication
+start replication on couchdb to sync-android
 ```
 curl -X POST -H 'Content-Type:application/json' -d '
 {
@@ -61,3 +63,4 @@ make sure our document 12345 was replicated
 ```
 echo 'select * from docs;' | sqlite3 /tmp/datastores/mydb/db.sync
 ```
+Example output: `1|12334'
