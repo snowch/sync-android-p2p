@@ -48,6 +48,7 @@ public class HttpListener extends ServerResource {
 
         if (runtime.toLowerCase().equals("android runtime")) {
             // FIXME allow this path to be configurable
+            // maybe pass values through restlet Context?
             databaseDir = "/data/data/com.example.snowch.myapplication/app_datastores";
         } else {
             databaseDir = System.getProperty("DB_DIR");
