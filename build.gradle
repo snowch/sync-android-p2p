@@ -4,8 +4,11 @@ apply plugin: 'maven-publish'
 
 allprojects {
     group = 'net.christophersnow'
-    version = '0.0.1-SNAPSHOT'
+    version = '0.0.2-SNAPSHOT'
     description = """cloudant-sync-p2p"""
+
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
 }
 
 repositories {

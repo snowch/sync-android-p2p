@@ -20,6 +20,7 @@ import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
+import org.restlet.resource.ResourceException;
 import org.restlet.resource.ServerResource;
 
 import java.io.File;
@@ -36,14 +37,31 @@ public class HttpListener extends ServerResource {
 
     private static final Logger logger = Logger.getLogger(HttpListener.class.getCanonicalName());
 
-    private static String databaseDir = System.getProperty("DB_DIR");
-
     // TODO need to ensure static access is thread-safe
     private static DatastoreManager manager;
 
     public HttpListener() {
+
+        String databaseDir;
+
+        String runtime = System.getProperty("java.runtime.name");
+
+        if (runtime.toLowerCase().equals("android runtime")) {
+            // FIXME allow this path to be configurable
+            databaseDir = "/data/data/com.example.snowch.myapplication/app_datastores";
+        } else {
+            databaseDir = System.getProperty("DB_DIR");
+        }
+
         File path = new File(databaseDir);
         manager = new DatastoreManager(databaseDir);
+    }
+
+    @java.lang.Override
+    protected void doInit() throws ResourceException {
+        //Context context = getContext();
+
+        super.doInit();
     }
 
     // TODO
