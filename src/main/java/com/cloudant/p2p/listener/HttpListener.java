@@ -168,7 +168,13 @@ public class HttpListener extends ServerResource {
 
     private Representation handleLocalGet(String path, String dbname) {
 
-        // strip the database name from that path
+        /*
+        Strip the database name from the path. E.g
+        
+        If the path is:      /target/_local/afa899a9e59589c3d4ce5668e3218aef 
+        then the id will be: _local/afa899a9e59589c3d4ce5668e3218aef
+        */
+        
         String id = path.replaceAll("/"+dbname+"/", "");
 
         Datastore ds = manager.openDatastore(dbname);
@@ -191,7 +197,7 @@ public class HttpListener extends ServerResource {
     }
 
     private Representation handleChangesGet(String path) {
-        // TODO implement me
+        // TODO changes handling isn't required ??
         String body = "changes";
         return new StringRepresentation(body, MediaType.APPLICATION_JSON);
     }
