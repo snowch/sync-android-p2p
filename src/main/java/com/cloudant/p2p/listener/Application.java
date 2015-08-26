@@ -40,7 +40,7 @@ public class Application {
     }
 
 
-    private static void createDevelopmentDatabase() throws IOException {
+    private static void createDevelopmentDatabase() throws Exception {
 
         // some temporary code for development purposes :)
         File path = new File(databaseDir);

@@ -70,7 +70,7 @@ public class HttpListener extends ServerResource {
     // http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris
 
     @Get() // @Get is required for both GET and HEAD requests
-    public Representation handleHeadAndGet() {
+    public Representation handleHeadAndGet() throws Exception {
 
         String path = getReference().getPath();
 
@@ -94,7 +94,7 @@ public class HttpListener extends ServerResource {
     }
 
     @Post("json")
-    public Representation handlePost(Representation entity) {
+    public Representation handlePost(Representation entity) throws Exception {
 
         String path = getReference().getPath();
 
@@ -118,7 +118,7 @@ public class HttpListener extends ServerResource {
     }
 
     @Put("json")
-    public Representation handlePut(Representation entity) {
+    public Representation handlePut(Representation entity) throws Exception {
 
         String path = getReference().getPath();
 
@@ -140,7 +140,7 @@ public class HttpListener extends ServerResource {
         }
     }
 
-    private Representation handleCreateTargetPut(String dbname) {
+    private Representation handleCreateTargetPut(String dbname) throws Exception {
 
         // TODO - authenticate request
         /*
@@ -166,7 +166,7 @@ public class HttpListener extends ServerResource {
         return new StringRepresentation(body, MediaType.APPLICATION_JSON);
     }
 
-    private Representation handleLocalGet(String path, String dbname) {
+    private Representation handleLocalGet(String path, String dbname) throws Exception {
 
         /*
         Strip the database name from the path. E.g
@@ -242,7 +242,7 @@ public class HttpListener extends ServerResource {
         return new StringRepresentation("404 - Database Not Found!", MediaType.TEXT_PLAIN);
     }
 
-    private Representation lastSequence(String dbname) {
+    private Representation lastSequence(String dbname) throws Exception {
         // the update_seq value may not actually be required
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("instance_start_time", getInstanceStartTime(dbname).toString());
@@ -256,7 +256,7 @@ public class HttpListener extends ServerResource {
         return new StringRepresentation("", MediaType.APPLICATION_JSON);
     }
 
-    private boolean idAndRevExistLocally(String dbname, String docId, String rev) {
+    private boolean idAndRevExistLocally(String dbname, String docId, String rev) throws Exception {
         Datastore ds = manager.openDatastore(dbname);
         BasicDocumentRevision retrieved = ds.getDocument(docId);
         boolean idAndRevExists = ds.containsDocument(docId, rev);
@@ -267,7 +267,7 @@ public class HttpListener extends ServerResource {
         return idAndRevExists;
     }
 
-    private String buildRevsDiffResponse(String dbname) {
+    private String buildRevsDiffResponse(String dbname) throws Exception {
         Map<String, Object> requestJson = getRequestEntityAsMap();
         Map<String, Object> responseJson = new HashMap<String, Object>();
 
@@ -295,7 +295,7 @@ public class HttpListener extends ServerResource {
         return response;
     }
 
-    private Representation handleRevsDiff(String dbname) {
+    private Representation handleRevsDiff(String dbname) throws Exception {
         String response = buildRevsDiffResponse(dbname);
         System.out.println("handleRevsDiff:" + response);
         return new StringRepresentation(response, MediaType.APPLICATION_JSON);
@@ -332,7 +332,7 @@ public class HttpListener extends ServerResource {
         return newList;
     }
 
-    private Representation handleBulkDocsPost(String dbname) {
+    private Representation handleBulkDocsPost(String dbname) throws Exception {
         // http://docs.couchdb.org/en/latest/replication/protocol.html#upload-batch-of-changed-documents
 
         Datastore ds = manager.openDatastore(dbname);
@@ -375,7 +375,7 @@ public class HttpListener extends ServerResource {
 //            System.out.println("revisionHistoryList: " + revisionHistoryList);
 //            System.out.println("body: " + body);
 
-            ((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, false);
+            ((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, null, false);
 
             // TODO
             // how do we get the status of the forceInsert command for creating the response json?
@@ -399,7 +399,7 @@ public class HttpListener extends ServerResource {
         return new StringRepresentation(responseJSON, MediaType.APPLICATION_JSON);
     }
 
-    private Representation handleLocalPut(String dbname) {
+    private Representation handleLocalPut(String dbname) throws Exception {
 
         Map<String, Object> request = getRequestEntityAsMap();
 
@@ -456,7 +456,7 @@ public class HttpListener extends ServerResource {
         return false;
     }
 
-    private String getLastSequence(String dbname) {
+    private String getLastSequence(String dbname) throws Exception {
 
         Datastore ds = manager.openDatastore(dbname);
         long seq = ds.getLastSequence();
