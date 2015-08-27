@@ -9,6 +9,7 @@ Expect lots of bugs, this code needs much more testing.
 ```
 git clone https://github.com/cloudant/sync-android
 cd sync-android
+git checkout 4e1b94c290cb01ca524e562f587017b1ea06e55d
 ```
 
 - we need the lastest sync-android libraries, so install 0.9.4-SNAPSHOT install ~/.m2 repository
