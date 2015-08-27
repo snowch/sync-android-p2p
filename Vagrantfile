@@ -29,4 +29,6 @@ Vagrant.configure(2) do |config|
     # Update to have the latest packages, remove if you don't need that
     config.vm.provision :shell, :inline => "apt-get update"
     config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes"
+
+    config.vm.provision :shell, :path => "./vagrant_setup.sh", :privileged => false
 end

@@ -15,9 +15,9 @@ tmux new-session -s 'run_sync'  -d
 
 tmux split-window -t 'run_sync'
 
-tmux send -t 'run_sync.0' "cd /vagrant/sync-android-p2p";
+tmux send -t 'run_sync.0' "cd /vagrant";
 tmux send -t 'run_sync.0' C-m;
-tmux send -t 'run_sync.0' "GRADLE_OPTS='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006' ./gradlew execute -DDB_DIR=/tmp/datastores/";
+tmux send -t 'run_sync.0' "GRADLE_OPTS='-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006' ./gradlew execute -DDB_DIR=/tmp/datastores/";
 tmux send -t 'run_sync.0' C-m;
 
 
