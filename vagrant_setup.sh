@@ -31,6 +31,9 @@ sudo chmod 0770 /usr/local/var/{lib,log,run}/couchdb/
 sudo chmod 664 /usr/local/etc/couchdb/*.ini
 sudo chmod 775 /usr/local/etc/couchdb/*.d
 
+# set large timeout to allow debugging
+sudo sed -i 's@^os_process_timeout.*$@os_process_timeout = 600000@g' /usr/local/etc/couchdb/default.ini
+
 sudo ln -s /usr/local/etc/init.d/couchdb /etc/init.d/couchdb
 sudo /etc/init.d/couchdb start
 sudo update-rc.d couchdb defaults
@@ -46,7 +49,7 @@ tar xzvf eclipse-java-mars-R-linux-gtk.tar.gz
 cd /home/vagrant
 git clone https://github.com/cloudant/sync-android
 cd sync-android/
-git checkout 0.10.0
+git checkout 4e1b94c290cb01ca524e562f587017b1ea06e55d
 ./gradlew install
 
 cd /vagrant

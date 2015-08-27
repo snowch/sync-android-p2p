@@ -12,9 +12,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Gradle: sync-android-0.10.0" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: sync-core-0.10.0" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: sync-javase-0.10.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: sync-android-0.9.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: sync-core-0.9.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: sync-javase-0.9.4-SNAPSHOT" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.restlet-2.1-M7" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.restlet.ext.simple-2.1-M7" level="project" />
     <orderEntry type="library" exported="" name="Gradle: android-4.0.1.2" level="project" />
