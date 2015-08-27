@@ -2,6 +2,13 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 
+eclipse {
+    classpath {
+       downloadSources=true
+    }
+}
+
+
 allprojects {
     group = 'net.christophersnow'
     version = '0.0.2-SNAPSHOT'
