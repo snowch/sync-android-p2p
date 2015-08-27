@@ -50,6 +50,8 @@ cd /home/vagrant
 git clone https://github.com/cloudant/sync-android
 cd sync-android/
 git checkout 4e1b94c290cb01ca524e562f587017b1ea06e55d
+cp /vagrant/gradlew .
+cp -r /vagrant/gradle .
 ./gradlew install
 
 cd /vagrant
