@@ -38,7 +38,8 @@ sudo /etc/init.d/couchdb restart
 
 
 
-wget -q -c -P /home/vagrant/ "https://eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/R/eclipse-java-mars-R-linux-gtk.tar.gz&r=1" -O eclipse-java-mars-R-linux-gtk.tar.gz
+wget -q -c "https://eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/mars/R/eclipse-java-mars-R-linux-gtk.tar.gz&r=1" -O /home/vagrant/eclipse-java-mars-R-linux-gtk.tar.gz
+cd /home/vagrant
 tar xzvf eclipse-java-mars-R-linux-gtk.tar.gz
 
 
