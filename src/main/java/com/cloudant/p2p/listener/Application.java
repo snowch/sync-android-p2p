@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class Application {
 
-    private static String databaseDir = System.getProperty("DB_DIR");
+    private static String databaseDir = System.getProperty("DB_DIR", "/tmp/datastores/");
 
     public static void main(String[] args) throws Exception {
 
