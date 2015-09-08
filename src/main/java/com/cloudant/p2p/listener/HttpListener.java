@@ -4,8 +4,11 @@ import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.cloudant.sync.datastore.Datastore;
 import com.cloudant.sync.datastore.DatastoreExtended;
 import com.cloudant.sync.datastore.DatastoreManager;
+import com.cloudant.sync.datastore.DatastoreNotCreatedException;
 import com.cloudant.sync.datastore.DocumentBody;
 import com.cloudant.sync.datastore.DocumentBodyFactory;
+import com.cloudant.sync.datastore.DocumentException;
+import com.cloudant.sync.datastore.DocumentNotFoundException;
 import com.cloudant.sync.datastore.DocumentRevision;
 import com.cloudant.sync.datastore.DocumentRevisionBuilder;
 import com.cloudant.sync.datastore.MutableDocumentRevision;
@@ -158,8 +161,13 @@ public class HttpListener extends ServerResource {
         */
 
         // TODO this method does not check and handle failure to create the database
-        Datastore ds = manager.openDatastore(dbname);
-        ds.close();
+        Datastore ds;
+		try {
+			ds = manager.openDatastore(dbname);
+			ds.close();
+		} catch (DatastoreNotCreatedException e) {
+			throw new RuntimeException(e);
+		}
 
         String body = "{ \"ok\": true }";
         getResponse().setStatus(Status.SUCCESS_CREATED);
@@ -177,9 +185,22 @@ public class HttpListener extends ServerResource {
         
         String id = path.replaceAll("/"+dbname+"/", "");
 
-        Datastore ds = manager.openDatastore(dbname);
-        BasicDocumentRevision retrieved = ds.getDocument(id);
-        ds.close();
+        Datastore ds;
+		try {
+			ds = manager.openDatastore(dbname);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+        BasicDocumentRevision retrieved = null;
+        
+		try {
+			retrieved = ds.getDocument(id);
+		} catch (Exception e) {
+			// do nothing
+		} finally {
+			ds.close();
+		}
 
         if (retrieved != null) {
             System.out.println("handleLocalGet: found id " + retrieved);
@@ -257,14 +278,22 @@ public class HttpListener extends ServerResource {
     }
 
     private boolean idAndRevExistLocally(String dbname, String docId, String rev) {
-        Datastore ds = manager.openDatastore(dbname);
-        BasicDocumentRevision retrieved = ds.getDocument(docId);
-        boolean idAndRevExists = ds.containsDocument(docId, rev);
-        ds.close();
-//        System.out.println(
-//            "dbname["+dbname+"] docId["+docId+"] rev["+rev+"] - exists: "+idAndRevExists
-//          );
-        return idAndRevExists;
+        Datastore ds;
+		try {
+			ds = manager.openDatastore(dbname);
+		} catch (DatastoreNotCreatedException e) {
+			throw new RuntimeException(e);
+		}
+		
+        try {
+			BasicDocumentRevision retrieved = ds.getDocument(docId);
+			return ds.containsDocument(docId, rev);
+			
+		} catch (DocumentNotFoundException e) {
+			return false;
+		} finally {
+			ds.close();
+		}
     }
 
     private String buildRevsDiffResponse(String dbname) {
@@ -335,7 +364,12 @@ public class HttpListener extends ServerResource {
     private Representation handleBulkDocsPost(String dbname) {
         // http://docs.couchdb.org/en/latest/replication/protocol.html#upload-batch-of-changed-documents
 
-        Datastore ds = manager.openDatastore(dbname);
+        Datastore ds;
+		try {
+			ds = manager.openDatastore(dbname);
+		} catch (DatastoreNotCreatedException e1) {
+			throw new RuntimeException(e1);
+		}
 
         Map<String, Object> bulkDocsRequest = getRequestEntityAsMap();
         //System.out.println("bulkDocsRequest: " + bulkDocsRequest);
@@ -371,12 +405,16 @@ public class HttpListener extends ServerResource {
 
             BasicDocumentRevision rev = builder.buildLocalDocument();
 
-//            System.out.println("rev: " + rev);
-//            System.out.println("revisionHistoryList: " + revisionHistoryList);
-//            System.out.println("body: " + body);
+            System.out.println("rev: " + rev);
+            System.out.println("revisionHistoryList: " + revisionHistoryList);
+            System.out.println("body: " + body);
 
-            ((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, false);
-
+            try {
+				((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, null, false);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+            
             // TODO
             // how do we get the status of the forceInsert command for creating the response json?
             // 1) listen to the eventbus?
@@ -417,7 +455,13 @@ public class HttpListener extends ServerResource {
         request.remove("_revisions");
         rev.body = DocumentBodyFactory.create(request);
 
-        Datastore ds = manager.openDatastore(dbname);
+        Datastore ds = null;
+		try {
+			ds = manager.openDatastore(dbname);
+		} catch (DatastoreNotCreatedException e1) {
+			throw new RuntimeException(e1);
+		}
+		
         DocumentRevision revision = null;
         try {
             if (!ds.containsDocument(docId, revId)) {
@@ -458,7 +502,12 @@ public class HttpListener extends ServerResource {
 
     private String getLastSequence(String dbname) {
 
-        Datastore ds = manager.openDatastore(dbname);
+        Datastore ds = null;
+		try {
+			ds = manager.openDatastore(dbname);
+		} catch (DatastoreNotCreatedException e) {
+			return null;
+		}
         long seq = ds.getLastSequence();
         ds.close();
 

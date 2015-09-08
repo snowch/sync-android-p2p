@@ -8,3 +8,4 @@ erl_crash.dump
 .idea/datasources.xml
 .idea/dataSources.ids
 local.properties
+/bin/
