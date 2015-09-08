@@ -26,9 +26,9 @@ repositories {
 }
 
 dependencies {
-    compile(group: 'com.cloudant', name: 'sync-android', version:'0.10.0')
-    compile(group: 'com.cloudant', name: 'sync-core', version:'0.10.0')
-    compile(group: 'com.cloudant', name: 'sync-javase', version:'0.10.0')
+    compile(group: 'com.cloudant', name: 'sync-android', version:'0.11.0')
+    compile(group: 'com.cloudant', name: 'sync-core', version:'0.11.0')
+    compile(group: 'com.cloudant', name: 'sync-javase', version:'0.11.0')
 
     compile("org.restlet.jse:org.restlet:2.1-M7") {
         exclude group: 'org.osgi', module: 'org.osgi.core'
