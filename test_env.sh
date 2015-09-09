@@ -4,7 +4,12 @@ rm -rf /tmp/datastores
 mkdir -p /tmp/datastores
 
 # stop any existing docker containers
-docker kill $(docker ps -q)
+EXISTING_DOCKER_INSTANCES=$(docker ps -q)
+
+if [[ $EXISTING_DOCKER_INSTANCES ]]
+then
+   docker kill $EXISTING_DOCKER_INSTANCES
+fi
 
 tmux new-session -s 'run_sync'  -d
 
