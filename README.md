@@ -20,13 +20,13 @@ cd /vagrant
 ./test_env.sh
 ```
 
-When the top window shows the restlet server has started, in the second window press:
+- When the top window shows the restlet server has started, in the second window press:
 
 ```
 [ENTER]
-```]
+```
 
-To exit the session: 
+- To exit the session: 
 
 ```
 [CTRL-B X]
