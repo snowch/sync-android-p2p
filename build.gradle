@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 
-// use this docker plugin for creating a couchdb conainer during integration testing
+// use this docker plugin for creating a couchdb container during integration testing
 apply plugin: 'com.bmuschko.docker-remote-api'
 
 import com.bmuschko.gradle.docker.tasks.container.*
@@ -16,7 +16,6 @@ buildscript {
         classpath 'com.bmuschko:gradle-docker-plugin:2.6'
     }
 }
-
 
 eclipse {
     classpath {
@@ -57,18 +56,15 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-all', version:'1.9.5'
 }
 
+// tasks
+
+defaultTasks 'clean', 'build'
+
 tasks.withType(Test) {
     // the native dir is one directory up from the core project dir
     systemProperty "sqlite4java.library.path", "../native"
 }
 
-task execute(type:JavaExec) {
-   main 'com.cloudant.p2p.listener.Application'
-   classpath sourceSets.main.runtimeClasspath 
-   //systemProperties [ "sqlite4java.library.path": "../native" ]
-   systemProperty 'sqlite4java.library.path','native'
-   systemProperty 'DB_DIR', System.getProperty("DB_DIR")
-}
 
 // integration tests
 
@@ -93,17 +89,20 @@ task stopMyAppContainer(type: DockerStopContainer) {
     targetContainerId { createMyAppContainer.getContainerId() }
 }
 
-task integrationTest(type: Test) {
+task executeApp(type:JavaExec) {
+   dependsOn startMyAppContainer
 
-    // TODO delete and recreate /tmp/datastores
-    tasks.createMyAppContainer.execute()
-    tasks.startMyAppContainer.execute()
+   main 'com.cloudant.p2p.listener.Application'
+   classpath sourceSets.main.runtimeClasspath 
+   systemProperty 'sqlite4java.library.path','native'
+   systemProperty 'DB_DIR', System.getProperty("DB_DIR")
+}
 
-    // TODO run in background thread:
-    tasks.execute.execute()
+// Cleanup
 
-    // TODO execute http requests
-    // TODO check results
-
-    finalizedBy stopMyAppContainer
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+    if ( tasks.createMyAppContainer.getContainerId() )
+    {
+       //tasks.stopMyAppContainer.execute()
+    }
 }
