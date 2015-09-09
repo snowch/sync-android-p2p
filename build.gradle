@@ -2,6 +2,22 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 
+// use this docker plugin for creating a couchdb conainer during integration testing
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:2.6'
+    }
+}
+
+
 eclipse {
     classpath {
        downloadSources=true
@@ -52,4 +68,42 @@ task execute(type:JavaExec) {
    //systemProperties [ "sqlite4java.library.path": "../native" ]
    systemProperty 'sqlite4java.library.path','native'
    systemProperty 'DB_DIR', System.getProperty("DB_DIR")
+}
+
+// integration tests
+
+
+task pullDockerCouchdb(type: DockerPullImage) {
+   repository = 'klaemo/couchdb'
+   tag = '1.6.1'
+}
+
+task createMyAppContainer(type: DockerCreateContainer) {
+    dependsOn pullDockerCouchdb
+    targetImageId { 'klaemo/couchdb:1.6.1' }
+    portBindings = ['5984:5984']
+}
+
+task startMyAppContainer(type: DockerStartContainer) {
+    dependsOn createMyAppContainer
+    targetContainerId { createMyAppContainer.getContainerId() }
+}
+
+task stopMyAppContainer(type: DockerStopContainer) {
+    targetContainerId { createMyAppContainer.getContainerId() }
+}
+
+task integrationTest(type: Test) {
+
+    // TODO delete and recreate /tmp/datastores
+    tasks.createMyAppContainer.execute()
+    tasks.startMyAppContainer.execute()
+
+    // TODO run in background thread:
+    tasks.execute.execute()
+
+    // TODO execute http requests
+    // TODO check results
+
+    finalizedBy stopMyAppContainer
 }

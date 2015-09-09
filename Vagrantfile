@@ -7,28 +7,27 @@
 # you're doing.
 Vagrant.configure(2) do |config|
 
-    config.vm.box = "zyga/ubuntu-precise-desktop-i386"
+    config.vm.box = "phusion/ubuntu-14.04-amd64"
 
-    config.vm.provider :virtualbox do |vb|
-      vb.gui = true
-      vb.customize ["modifyvm", :id, "--memory", 1024]
-      vb.customize ["modifyvm", :id, "--vram", 64]
-      vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
+    # Only run provisioning on first 'vagrant up'
+    if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
+        # Install Docker
+        pkg_cmd = "wget -q -O - https://get.docker.io/gpg | apt-key add -;" \
+            "echo deb http://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list;" \
+            "apt-get update -qq; apt-get install -q -y --force-yes lxc-docker; "
+        # Add vagrant user to the docker group
+        pkg_cmd << "usermod -a -G docker vagrant; "
+        pkg_cmd << "sed -i '/^#DOCKER_OPTS=.*$/a DOCKER_OPTS=\"-H tcp://localhost:2375\"' /etc/default/docker; "
+        pkg_cmd << "service docker restart; "
+        config.vm.provision :shell, :inline => pkg_cmd
     end
 
-    # Automatically use local apt-cacher-ng if available
-    if File.exists? "/etc/apt-cacher-ng"
-      # If apt-cacher-ng is installed on this machine then just use it.
-      require 'socket'
-      guessed_address = Socket.ip_address_list.detect{|intf| !intf.ipv4_loopback?}
-      if guessed_address
-        config.vm.provision :shell, :inline => "echo 'Acquire::http { Proxy \"http://#{guessed_address.ip_address}:3142\"; };' > /etc/apt/apt.conf.d/00proxy"
-      end
+    # Only run provisioning on first 'vagrant up'
+    if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?
+        # Install JDK
+        pkg_cmd = "apt-get update -qq; apt-get install -q -y --force-yes openjdk-7-jdk; "
+        # Download latest gradle
+        pkg_cmd << "sudo -u vagrant -i sh -c 'cd /vagrant; ./gradlew pullDockerCouchdb'; "
+        config.vm.provision :shell, :inline => pkg_cmd
     end
-
-    # Update to have the latest packages, remove if you don't need that
-    config.vm.provision :shell, :inline => "apt-get update"
-    config.vm.provision :shell, :inline => "DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes"
-
-    config.vm.provision :shell, :path => "./vagrant_setup.sh", :privileged => false
 end

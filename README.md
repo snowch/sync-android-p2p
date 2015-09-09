@@ -12,17 +12,5 @@ cd sync-android
 ```
 
 - start the development environment
-```
-vagrant up
-```
 
-- open a terminal in the ubuntu window
-- open eclipse 
-  - import General Project `/vagrant`
-  - import Run/Debug Breakpoints  `/vagrant/Breakpoints.bkpt`
-  - import Run/Debug Launch Configuration `/vagrant/App.launch`
-
-- run the script to start a replication and follow the instructions
-```
-./run_sync_eclipse.sh
-```
+TODO ...
