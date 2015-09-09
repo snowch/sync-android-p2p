@@ -20,7 +20,14 @@ cd /vagrant
 ./test_env.sh
 ```
 
-- When the top window shows the restlet server has started, in the second window press:
+- when the top window shows the restlet server has started:
+
+```
+Starting the Simple [HTTP/1.1] server on port 8182
+> Building 85% > :executeApp
+```
+
+- in the bottom window press ENTER to start a replication:
 
 ```
 [ENTER]
