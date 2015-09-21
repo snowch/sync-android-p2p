@@ -42,11 +42,39 @@ Starting the Simple [HTTP/1.1] server on port 8182
 [CTRL-B X]
 ```
 
-- deploying the jars to the github repo
+- deploying this project's jars to the github repo
 
 ```
 ./gradlew clean build uploadArchives
 git add repository/
 git commit ...
 git push 
+```
+
+- using this project's jars from another project 
+
+Example build.gradle:
+
+
+```
+apply plugin: 'android'
+
+android {
+  compileSdkVersion 19
+  buildToolsVersion '19.0.0'
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://maven.restlet.org" }
+    maven { url "http://cloudant.github.io/cloudant-sync-eap/repository/" }
+    maven { url 'https://github.com/snowch/sync-android-p2p/raw/master/repository/' }
+  }
+
+  ...
+    
+  dependencies {
+    compile 'net.christophersnow:sync-android-p2p:0.0.2-SNAPSHOT'
+  }
+}
 ```
