@@ -47,6 +47,6 @@ Starting the Simple [HTTP/1.1] server on port 8182
 ```
 ./gradlew clean build uploadArchives
 git add repository/
-git commt ...
+git commit ...
 git push 
 ```
