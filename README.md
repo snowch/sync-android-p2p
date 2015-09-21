@@ -38,3 +38,12 @@ Starting the Simple [HTTP/1.1] server on port 8182
 ```
 [CTRL-B X]
 ```
+
+- deploying the jars to the github repo
+
+```
+./gradlew clean build uploadArchives
+git add repository/
+git commt ...
+git push 
+```

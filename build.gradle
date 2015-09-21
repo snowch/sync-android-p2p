@@ -25,6 +25,7 @@ eclipse {
 
 
 allprojects {
+	
     group = 'net.christophersnow'
     version = '0.0.2-SNAPSHOT'
     description = """cloudant-sync-p2p"""
@@ -38,6 +39,12 @@ repositories {
     mavenCentral()
     maven { url "http://maven.restlet.org" }
     maven { url "http://cloudant.github.io/cloudant-sync-eap/repository/" }
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file:///${new File(".").absolutePath}/repository/")
+    }
 }
 
 dependencies {
