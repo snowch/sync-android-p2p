@@ -12,34 +12,13 @@ Expect lots of bugs, this code needs much more testing.
 ```
 git clone https://github.com/snowch/sync-android-p2p
 cd sync-android
+./gradlew eclipse
 ```
 
-- start the development environment
+In Eclipse, create a Run Configuration to run P2PTest.java.  Ensure the VM Arguments are set to this for the test:
 
 ```
-vagrant up
-vagrant ssh
-cd /vagrant
-./test_env.sh
-```
-
-- when the top window shows the restlet server has started:
-
-```
-Starting the Simple [HTTP/1.1] server on port 8182
-> Building 85% > :executeApp
-```
-
-- in the bottom window press ENTER to start a replication:
-
-```
-[ENTER]
-```
-
-- To exit the session: 
-
-```
-[CTRL-B X]
+-ea -Dsqlite4java.library.path=native
 ```
 
 - deploying this project's jars to the github repo

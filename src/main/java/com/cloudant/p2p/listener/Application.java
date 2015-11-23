@@ -4,12 +4,12 @@ import com.cloudant.sync.datastore.Datastore;
 import com.cloudant.sync.datastore.DatastoreManager;
 
 import org.restlet.Component;
+import org.restlet.Context;
 import org.restlet.Server;
 import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by snowch on 29/01/15.
@@ -29,7 +29,9 @@ public class Application {
         org.restlet.Application myApp = new org.restlet.Application() {
             @Override
             public org.restlet.Restlet createInboundRoot() {
-                router.setContext(getContext());
+            	Context ctx = getContext();
+				ctx.getParameters().add("databaseDir", databaseDir);
+				router.setContext(ctx);
                 return router;
             };
         };

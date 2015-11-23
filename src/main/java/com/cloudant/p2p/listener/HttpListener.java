@@ -15,6 +15,7 @@ import com.cloudant.sync.datastore.MutableDocumentRevision;
 import com.cloudant.sync.util.ExtendedJSONUtils;
 import com.cloudant.sync.util.JSONUtils;
 
+import org.restlet.Context;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
@@ -45,40 +46,25 @@ public class HttpListener extends ServerResource {
 
     public HttpListener() {
 
-        String databaseDir;
+        //final String runtime = System.getProperty("java.runtime.name");
 
-        String runtime = System.getProperty("java.runtime.name");
-
-        if (runtime.toLowerCase().equals("android runtime")) {
-            // FIXME allow this path to be configurable
-            // maybe pass values through restlet Context?
-            databaseDir = "/data/data/com.example.snowch.myapplication/app_datastores";
-        } else {
-            databaseDir = System.getProperty("DB_DIR");
-        }
-
-        File path = new File(databaseDir);
+        final String databaseDir = getApplication().getContext().getParameters().getFirstValue("databaseDir");
+     
+        //final File path = new File(databaseDir);
         manager = new DatastoreManager(databaseDir);
     }
 
     @java.lang.Override
     protected void doInit() throws ResourceException {
-        //Context context = getContext();
-
         super.doInit();
     }
-
-    // TODO
-    // can hierachical URL's be used here?
-    // http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris
 
     @Get() // @Get is required for both GET and HEAD requests
     public Representation handleHeadAndGet() {
 
         String path = getReference().getPath();
-
         String dbname = getDatabaseName(path);
-
+        
         if (!dbNameExists(dbname)) {
             return databaseNotFound();
         }

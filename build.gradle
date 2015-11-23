@@ -72,7 +72,6 @@ tasks.withType(Test) {
     systemProperty "sqlite4java.library.path", "../native"
 }
 
-
 // integration tests
 
 
