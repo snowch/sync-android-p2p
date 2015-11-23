@@ -1,1 +1,3 @@
 language: java
+
+script: ./gradlew test -Dsqlite4java.library.path=native
