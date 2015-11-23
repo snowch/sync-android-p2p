@@ -22,13 +22,12 @@ import org.restlet.resource.ServerResource;
 
 import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.cloudant.sync.datastore.Datastore;
+import com.cloudant.sync.datastore.DatastoreExtended;
 import com.cloudant.sync.datastore.DatastoreManager;
 import com.cloudant.sync.datastore.DatastoreNotCreatedException;
 import com.cloudant.sync.datastore.DocumentBody;
 import com.cloudant.sync.datastore.DocumentBodyFactory;
 import com.cloudant.sync.datastore.DocumentException;
-import com.cloudant.sync.datastore.DocumentNotFoundException;
-import com.cloudant.sync.datastore.DocumentRevision;
 import com.cloudant.sync.datastore.DocumentRevisionBuilder;
 import com.cloudant.sync.datastore.MutableDocumentRevision;
 import com.cloudant.sync.util.ExtendedJSONUtils;
@@ -385,20 +384,16 @@ public class HttpListener extends ServerResource {
             doc.remove("_rev");
 
             DocumentBody body = DocumentBodyFactory.create(doc);
-            
-            System.out.println( docId );
-            System.out.println( revId );
-            System.out.println( body );
 
             DocumentRevisionBuilder builder = new DocumentRevisionBuilder();
             builder.setDocId(docId);
             builder.setRevId(revId);
             builder.setBody(body);
 
-            MutableDocumentRevision revision = new MutableDocumentRevision();
-            revision.body = DocumentBodyFactory.create(doc);
+            BasicDocumentRevision rev = builder.build();
+
             try {
-				ds.createDocumentFromRevision(revision);
+				((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, null, false);
 			} catch (DocumentException e) {
 				throw new RuntimeException(e);
 			}  
@@ -434,14 +429,19 @@ public class HttpListener extends ServerResource {
         String docId = (String)request.get("_id");
         String revId = (String)request.get("_rev");
 
-        MutableDocumentRevision rev = new MutableDocumentRevision();
-        rev.docId = docId;
-
         request.remove("_id");
         request.remove("_rev");
         request.remove("_revision");
         request.remove("_revisions");
-        rev.body = DocumentBodyFactory.create(request);
+        
+        DocumentBody body = DocumentBodyFactory.create(request);
+        
+        DocumentRevisionBuilder builder = new DocumentRevisionBuilder();
+        builder.setDocId(docId);
+        builder.setRevId(revId);
+        builder.setDeleted(false);
+        builder.setBody(body);
+        BasicDocumentRevision doc = builder.build();
 
         Datastore ds = null;
 		try {
@@ -450,11 +450,11 @@ public class HttpListener extends ServerResource {
 			throw new RuntimeException(e1);
 		}
 		
-        DocumentRevision revision = null;
         try {
             if (!ds.containsDocument(docId, revId)) {
-                revision = ds.createDocumentFromRevision(rev);
-                revId = revision.getRevision();
+               
+                ((DatastoreExtended)ds).forceInsert(doc);
+                
             } else {
                 // FIXME the datastore shouldn't contain this revId
                 System.out.println("XXXXXXXX " + docId + " " + revId);
@@ -506,5 +506,4 @@ public class HttpListener extends ServerResource {
         // FIXME
         return "1381218659871282";
     }
-
 }

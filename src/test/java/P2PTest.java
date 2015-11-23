@@ -42,7 +42,7 @@ public class P2PTest extends P2PAbstractTest {
 			URI dstUri = new URI("http://" + IP_ADDR + ":" + DST_PORT + "/target");
 			
 			DatastoreManager sourceManager = new DatastoreManager(databaseDirs.get(SRC_PORT));
-			Datastore sourceDs = sourceManager.openDatastore("mydb");
+			Datastore sourceDs = sourceManager.openDatastore("source");
 	
 			MutableDocumentRevision revToCreate = new MutableDocumentRevision();
 			Map<String, Object> json = new HashMap<String, Object>();
@@ -60,17 +60,22 @@ public class P2PTest extends P2PAbstractTest {
 		
 		// check replication worked - does document exist in target?
 		
-//		try {
-//			DatastoreManager destManager = new DatastoreManager(databaseDirs.get(DST_PORT));
-//			Datastore destDs = destManager.openDatastore("mydb");
-//			Assert.assertTrue(
-//					"Source document wasn't found in target database",
-//					destDs.containsDocument(sourceRev.getId(), sourceRev.getRevision())
-//					);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			fail("Unexpected exception: " + e.getMessage());
-//		}
+		try {
+			String targetDb = databaseDirs.get(DST_PORT);
+			DatastoreManager destManager = new DatastoreManager(targetDb);
+			Datastore destDs = destManager.openDatastore("target");
+			Assert.assertTrue(
+					"Source document " + 
+							sourceRev.getId() + " " + 
+							sourceRev.getRevision() + " was not found in target database " +
+							targetDb + "/" + destDs.getDatastoreName() + "/db.sync",
+							
+					destDs.containsDocument(sourceRev.getId(), sourceRev.getRevision())
+					);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			fail("Unexpected exception: " + e.getMessage());
+		}
 	}
 }
