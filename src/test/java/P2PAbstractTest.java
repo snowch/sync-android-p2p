@@ -108,10 +108,15 @@ public abstract class P2PAbstractTest {
 	}
 
 	@After
-	public void tearDown() throws IOException {
+	public void tearDown() {
 		// TODO nicely shutdown the Restlet servers 
-		removeRecursive( (new File(databaseDirs.get(8182))).toPath() );
-		removeRecursive( (new File(databaseDirs.get(8183))).toPath() );
+		try {
+			removeRecursive( (new File(databaseDirs.get(8182))).toPath() );
+			removeRecursive( (new File(databaseDirs.get(8183))).toPath() );
+		}
+		catch (Exception e) {
+			// ignore
+		}
 	}
 
 	protected void waitForReplication(Replicator replicator) throws InterruptedException {

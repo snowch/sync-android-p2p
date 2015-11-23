@@ -27,24 +27,26 @@ public class P2PTest extends P2PAbstractTest {
 	@Test
 	public void test() throws Exception {
 
-		URI uri = new URI("http://localhost:8183/mydb");
-
-		DatastoreManager manager = new DatastoreManager(databaseDirs.get(8182));
-		Datastore ds = manager.openDatastore("mydb");
-
-
-		MutableDocumentRevision rev = new MutableDocumentRevision();
-		Map<String, Object> json = new HashMap<String, Object>();
-		json.put("description", "Buy milk");
-		json.put("completed", false);
-		json.put("type", "com.cloudant.sync.example.task");
-		rev.body = DocumentBodyFactory.create(json);
-		ds.createDocumentFromRevision(rev);
-
-		Replicator replicator = ReplicatorBuilder.push().from(ds).to(uri).build();
-		waitForReplication(replicator);
-
-		fail("Not yet implemented");
+		try {
+			URI uri = new URI("http://localhost:8183/mydb");
+	
+			DatastoreManager manager = new DatastoreManager(databaseDirs.get(8182));
+			Datastore ds = manager.openDatastore("mydb");
+	
+	
+			MutableDocumentRevision rev = new MutableDocumentRevision();
+			Map<String, Object> json = new HashMap<String, Object>();
+			json.put("description", "Buy milk");
+			json.put("completed", false);
+			json.put("type", "com.cloudant.sync.example.task");
+			rev.body = DocumentBodyFactory.create(json);
+			ds.createDocumentFromRevision(rev);
+	
+			Replicator replicator = ReplicatorBuilder.push().from(ds).to(uri).build();
+			waitForReplication(replicator);
+		}
+		catch (Exception e) {
+			fail("Unexpected exception: " + e.getMessage());
+		}
 	}
-
 }
