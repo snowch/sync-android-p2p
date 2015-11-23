@@ -8,6 +8,8 @@ This project is a prototype.  It can perform a basic replication based on the st
 
 Expect lots of bugs, this code needs much more testing.
 
+### Testing this project
+
 - check out this project
 ```
 git clone https://github.com/snowch/sync-android-p2p
@@ -21,7 +23,7 @@ In Eclipse, create a Run Configuration to run P2PTest.java.  Ensure the VM Argum
 -ea -Dsqlite4java.library.path=native
 ```
 
-- deploying this project's jars to the github repo
+### Deploying this project's jars to the github repo
 
 ```
 ./gradlew clean build uploadArchives
@@ -30,7 +32,7 @@ git commit ...
 git push 
 ```
 
-- using this project's jars from another project 
+### Using this project's jars from another project 
 
 Example build.gradle:
 
