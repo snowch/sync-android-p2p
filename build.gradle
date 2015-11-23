@@ -69,7 +69,7 @@ defaultTasks 'clean', 'build'
 
 tasks.withType(Test) {
     // the native dir is one directory up from the core project dir
-    systemProperty "sqlite4java.library.path", "../native"
+    systemProperty "sqlite4java.library.path", "./native"
 }
 
 // integration tests
