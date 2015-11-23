@@ -19,6 +19,8 @@ public class Application {
     private static String databaseDir = System.getProperty("DB_DIR", "/tmp/datastores/");
 
     public static void main(String[] args) throws Exception {
+    	
+    	final int port = 8182;
 
         createDevelopmentDatabase();
 
@@ -31,6 +33,7 @@ public class Application {
             public org.restlet.Restlet createInboundRoot() {
             	Context ctx = getContext();
 				ctx.getParameters().add("databaseDir", databaseDir);
+				ctx.getParameters().add("port", Integer.toString(port));
 				router.setContext(ctx);
                 return router;
             };
@@ -38,7 +41,7 @@ public class Application {
         Component component = new Component();
         component.getDefaultHost().attach("/", myApp);
 
-        new Server(Protocol.HTTP, 8182, component).start();
+        new Server(Protocol.HTTP, port, component).start();
     }
 
 

@@ -4,9 +4,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.cloudant.sync.datastore.Datastore;
 import com.cloudant.sync.datastore.DatastoreManager;
 import com.cloudant.sync.datastore.DocumentBodyFactory;
@@ -16,37 +18,59 @@ import com.cloudant.sync.replication.ReplicatorBuilder;
 
 
 public class P2PTest extends P2PAbstractTest {
+	
+	final static String IP_ADDR = "127.0.0.1";
+	
+	final static int SRC_PORT = 8182;
 
+	final static int DST_PORT = 8184;
 	
 	@Before
 	public void setup() throws Exception {
-		createServer(8182);
-		createServer(8184);
+		createServer(SRC_PORT, "source");
+		createServer(DST_PORT, "target");
 	}
 	
 	@Test
-	public void test() throws Exception {
+	public void testPush() throws Exception {
+		
+		BasicDocumentRevision sourceRev = null;
 
+		// create a document in the source database
+		
 		try {
-			URI uri = new URI("http://localhost:8183/mydb");
+			URI dstUri = new URI("http://" + IP_ADDR + ":" + DST_PORT + "/target");
+			
+			DatastoreManager sourceManager = new DatastoreManager(databaseDirs.get(SRC_PORT));
+			Datastore sourceDs = sourceManager.openDatastore("mydb");
 	
-			DatastoreManager manager = new DatastoreManager(databaseDirs.get(8182));
-			Datastore ds = manager.openDatastore("mydb");
-	
-	
-			MutableDocumentRevision rev = new MutableDocumentRevision();
+			MutableDocumentRevision revToCreate = new MutableDocumentRevision();
 			Map<String, Object> json = new HashMap<String, Object>();
 			json.put("description", "Buy milk");
-			json.put("completed", false);
-			json.put("type", "com.cloudant.sync.example.task");
-			rev.body = DocumentBodyFactory.create(json);
-			ds.createDocumentFromRevision(rev);
+			revToCreate.body = DocumentBodyFactory.create(json);
+			sourceRev = sourceDs.createDocumentFromRevision(revToCreate);
 	
-			Replicator replicator = ReplicatorBuilder.push().from(ds).to(uri).build();
+			Replicator replicator = ReplicatorBuilder.push().from(sourceDs).to(dstUri).build();
 			waitForReplication(replicator);
 		}
 		catch (Exception e) {
 			fail("Unexpected exception: " + e.getMessage());
 		}
+		
+		
+		// check replication worked - does document exist in target?
+		
+//		try {
+//			DatastoreManager destManager = new DatastoreManager(databaseDirs.get(DST_PORT));
+//			Datastore destDs = destManager.openDatastore("mydb");
+//			Assert.assertTrue(
+//					"Source document wasn't found in target database",
+//					destDs.containsDocument(sourceRev.getId(), sourceRev.getRevision())
+//					);
+//		}
+//		catch (Exception e) {
+//			e.printStackTrace();
+//			fail("Unexpected exception: " + e.getMessage());
+//		}
 	}
 }

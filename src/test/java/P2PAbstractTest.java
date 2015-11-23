@@ -68,13 +68,13 @@ public abstract class P2PAbstractTest {
 		});
 	}
 
-	void createServer(final int port) throws Exception {
+	void createServer(final int port, final String dbname) throws Exception {
 	
 		final String databaseDir = Files.createTempDirectory(null).toAbsolutePath().toString();
 		databaseDirs.put(port, databaseDir);
 	
 		DatastoreManager manager = new DatastoreManager(databaseDir);
-		Datastore ds = manager.openDatastore("mydb");
+		Datastore ds = manager.openDatastore(dbname);
 		ds.close();
 	
 		Runnable r = new Runnable()
@@ -90,6 +90,7 @@ public abstract class P2PAbstractTest {
 					public org.restlet.Restlet createInboundRoot() {
 						Context ctx = getContext();
 						ctx.getParameters().add("databaseDir", databaseDir);
+						ctx.getParameters().add("port", Integer.toString(port));
 						router.setContext(ctx);
 						return router;
 					};

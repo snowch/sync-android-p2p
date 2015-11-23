@@ -1,8 +1,27 @@
 package com.cloudant.p2p.listener;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Logger;
+
+import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.data.Status;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
+import org.restlet.resource.Get;
+import org.restlet.resource.Post;
+import org.restlet.resource.Put;
+import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
+
 import com.cloudant.sync.datastore.BasicDocumentRevision;
 import com.cloudant.sync.datastore.Datastore;
-import com.cloudant.sync.datastore.DatastoreExtended;
 import com.cloudant.sync.datastore.DatastoreManager;
 import com.cloudant.sync.datastore.DatastoreNotCreatedException;
 import com.cloudant.sync.datastore.DocumentBody;
@@ -15,42 +34,27 @@ import com.cloudant.sync.datastore.MutableDocumentRevision;
 import com.cloudant.sync.util.ExtendedJSONUtils;
 import com.cloudant.sync.util.JSONUtils;
 
-import org.restlet.Context;
-import org.restlet.data.MediaType;
-import org.restlet.data.Method;
-import org.restlet.data.Status;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
-import org.restlet.resource.Get;
-import org.restlet.resource.Post;
-import org.restlet.resource.Put;
-import org.restlet.resource.ResourceException;
-import org.restlet.resource.ServerResource;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 // Do not use this code for production - it is only a proof-of-concept.
 public class HttpListener extends ServerResource {
+	
+	public int port;
+	
+	public String databaseDir;
 
     private static final Logger logger = Logger.getLogger(HttpListener.class.getCanonicalName());
-
+    
     // TODO need to ensure static access is thread-safe
     private static DatastoreManager manager;
 
     public HttpListener() {
 
-        //final String runtime = System.getProperty("java.runtime.name");
+        databaseDir = 
+        		getApplication().getContext().getParameters().getFirstValue("databaseDir");
 
-        final String databaseDir = getApplication().getContext().getParameters().getFirstValue("databaseDir");
-     
-        //final File path = new File(databaseDir);
+        port = new Integer(
+        			getApplication().getContext().getParameters().getFirstValue("port")
+        			);
+        
         manager = new DatastoreManager(databaseDir);
     }
 
@@ -88,7 +92,7 @@ public class HttpListener extends ServerResource {
         String path = getReference().getPath();
 
         String dbname = getDatabaseName(path);
-
+        
         if (!dbNameExists(dbname)) {
             return databaseNotFound();
         }
@@ -102,7 +106,8 @@ public class HttpListener extends ServerResource {
             return handleBulkDocsPost(dbname);
         }
         else {
-            throw new RuntimeException("Shouldn't have reached here");
+        	getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+        	return new StringRepresentation("{\"message\": \"Server error for request: " + getMethod() + " " + path + "\"}", MediaType.TEXT_PLAIN);
         }
     }
 
@@ -125,7 +130,8 @@ public class HttpListener extends ServerResource {
         else if (path.contains("/_local/")) {
             return handleLocalPut(dbname);
         } else {
-            throw new RuntimeException("Shouldn't have reached here");
+        	getResponse().setStatus(Status.SERVER_ERROR_INTERNAL);
+        	return new StringRepresentation("{\"message\": \"Server error for request: " + getMethod() + " " + path + "\"}", MediaType.TEXT_PLAIN);
         }
     }
 
@@ -189,11 +195,11 @@ public class HttpListener extends ServerResource {
 		}
 
         if (retrieved != null) {
-            System.out.println("handleLocalGet: found id " + retrieved);
+            System.out.println(port + " handleLocalGet: found id " + retrieved);
             String body = JSONUtils.serializeAsString(retrieved.asMap());
             return new StringRepresentation(body, MediaType.APPLICATION_JSON);
         } else {
-            System.out.println("handleLocalGet: id not found " + id);
+            System.out.println(port + " handleLocalGet: id not found " + id);
             Map<String, Object> response = new HashMap<String, Object>();
             response.put("error", "not_found");
             response.put("reason", "missing");
@@ -272,11 +278,7 @@ public class HttpListener extends ServerResource {
 		}
 		
         try {
-			BasicDocumentRevision retrieved = ds.getDocument(docId);
 			return ds.containsDocument(docId, rev);
-			
-		} catch (DocumentNotFoundException e) {
-			return false;
 		} finally {
 			ds.close();
 		}
@@ -312,7 +314,7 @@ public class HttpListener extends ServerResource {
 
     private Representation handleRevsDiff(String dbname) {
         String response = buildRevsDiffResponse(dbname);
-        System.out.println("handleRevsDiff:" + response);
+        System.out.println(port + " handleRevsDiff:" + response);
         return new StringRepresentation(response, MediaType.APPLICATION_JSON);
     }
 
@@ -358,7 +360,7 @@ public class HttpListener extends ServerResource {
 		}
 
         Map<String, Object> bulkDocsRequest = getRequestEntityAsMap();
-        //System.out.println("bulkDocsRequest: " + bulkDocsRequest);
+        System.out.println(port + " bulkDocsRequest: " + bulkDocsRequest);
 
         List<Map<String, Object>> docs = (List<Map<String, Object>>) bulkDocsRequest.get("docs");
 
@@ -383,32 +385,25 @@ public class HttpListener extends ServerResource {
             doc.remove("_rev");
 
             DocumentBody body = DocumentBodyFactory.create(doc);
+            
+            System.out.println( docId );
+            System.out.println( revId );
+            System.out.println( body );
 
             DocumentRevisionBuilder builder = new DocumentRevisionBuilder();
             builder.setDocId(docId);
             builder.setRevId(revId);
             builder.setBody(body);
 
-            BasicDocumentRevision rev = builder.buildLocalDocument();
-
-            System.out.println("rev: " + rev);
-            System.out.println("revisionHistoryList: " + revisionHistoryList);
-            System.out.println("body: " + body);
-
+            MutableDocumentRevision revision = new MutableDocumentRevision();
+            revision.body = DocumentBodyFactory.create(doc);
             try {
-				((DatastoreExtended)ds).forceInsert(rev, revisionHistoryList, null, null, false);
-			} catch (Exception e) {
+				ds.createDocumentFromRevision(revision);
+			} catch (DocumentException e) {
 				throw new RuntimeException(e);
-			}
+			}  
             
-            // TODO
-            // how do we get the status of the forceInsert command for creating the response json?
-            // 1) listen to the eventbus?
-            // 2) perform a query?
-            // 3) something else (e.g. assume success) ...
-
-            // For now, lets assume that each forceInsert was successful
-            Map<String, Object> responseItem = new HashMap<String, Object>();
+            Map<String, Object> responseItem = new TreeMap<String, Object>();
             responseItem.put("ok", true);
             responseItem.put("id", docId);
             responseItem.put("rev", revId);
@@ -417,8 +412,15 @@ public class HttpListener extends ServerResource {
 
         ds.close();
 
-        String responseJSON = ExtendedJSONUtils.serializeAsString(response);
-        System.out.println(responseJSON);
+        Boolean newEdits = (Boolean)bulkDocsRequest.get("new_edits");
+        
+        String responseJSON = "";
+        if (newEdits != null && !newEdits) {
+        	responseJSON = "[]";
+        } else {
+        	responseJSON = ExtendedJSONUtils.serializeAsString(response);
+        }
+        System.out.println(port + " handleBulkDocsPost: " + responseJSON);
         getResponse().setStatus(Status.SUCCESS_CREATED);
         return new StringRepresentation(responseJSON, MediaType.APPLICATION_JSON);
     }
