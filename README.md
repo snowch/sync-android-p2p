@@ -17,7 +17,7 @@ cd sync-android
 ./gradlew eclipse
 ```
 
-In Eclipse, create a Run Configuration to run P2PTest.java.  Ensure the VM Arguments are set to this for the test:
+- In Eclipse, create a Run Configuration to run P2PTest.java.  Ensure the VM Arguments are set to this for the test:
 
 ```
 -ea -Dsqlite4java.library.path=native
