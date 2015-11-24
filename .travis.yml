@@ -1,3 +1,3 @@
 language: java
 
-script: ./gradlew clean build check -D-ea -Dsqlite4java.library.path=native
+script: ./gradlew clean build check -D-ea -Dsqlite4java.library.path=native --info
