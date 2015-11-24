@@ -14,6 +14,13 @@ Expect lots of bugs, this code needs much more testing.
 ```
 git clone https://github.com/snowch/sync-android-p2p
 cd sync-android
+```
+
+### Using Eclipse
+
+If you are using eclipse, execute below command. For Android studio, skip to *Using Android Studio* section
+
+```
 ./gradlew eclipse
 ```
 
@@ -21,6 +28,15 @@ cd sync-android
 
 ```
 -ea -Dsqlite4java.library.path=native
+```
+
+### Using Android Studio
+
+To run JUnit tests in Android Studio you will need to set VM arguments in the following way:
+
+- In menu, select Run -> Edit configurations
+- In Edit configurations screen select Defaults -> JUnit
+- At right hand panel add ```-ea -Dsqlite4java.library.path=native``` as VM Options
 ```
 
 ### Deploying this project's jars to the github repo
