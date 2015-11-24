@@ -1,9 +1,11 @@
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,9 @@ public class P2PTest extends P2PAbstractTest {
 	public void setup() throws Exception {
 		createServer(SRC_PORT, "source");
 		createServer(DST_PORT, "target");
+		
+		// wait for servers to start - TODO there's probably a better way we should be doing this
+		Thread.sleep(1000);
 	}
 	
 	@Test
