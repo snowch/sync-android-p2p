@@ -37,7 +37,6 @@ To run JUnit tests in Android Studio you will need to set VM arguments in the fo
 - In menu, select Run -> Edit configurations
 - In Edit configurations screen select Defaults -> JUnit
 - At right hand panel add ```-ea -Dsqlite4java.library.path=native``` as VM Options
-```
 
 ### Deploying this project's jars to the github repo
 
