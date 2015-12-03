@@ -74,3 +74,5 @@ android {
   }
 }
 ```
+
+See example project: [./sync-android-p2p-example](./sync-android-p2p-example)
