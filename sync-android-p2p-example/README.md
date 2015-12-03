@@ -10,6 +10,7 @@ database allowing the device to become a target destination for replication.
 ```
 $ cd ..
 $ ./gradlew build install
+$ cd sync-android-p2p-example
 ```
 
 - Build and install this example application
