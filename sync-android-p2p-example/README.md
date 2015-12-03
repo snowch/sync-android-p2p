@@ -1,13 +1,18 @@
 # sync-android-p2p-example
 
 An example Android application that uses https://github.com/snowch/sync-android-p2p to expose a device sync android 
-database allowing the device to become a target destination for a couchdb replication.
+database allowing the device to become a target destination for replication.
 
 *Setup instructions*
 
-- Ensure you have couchdb running
+- Make sure the p2p library is available
 
-- Deploy this code to device that is on the same network as the couchdb server.
+```
+$ cd ..
+$ ./gradlew build install
+```
+
+- Build and install this example application
 
 ```
 $ ./gradlew build assembleRelease
