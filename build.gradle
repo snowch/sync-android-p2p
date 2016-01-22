@@ -53,9 +53,9 @@ sourceSets {
 
 
 dependencies {
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'0.13.2')
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version:'0.13.2')
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-javase', version:'0.13.2')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'0.15.0')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version:'0.15.0')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-javase', version:'0.15.0')
 
     compile("org.restlet.jse:org.restlet:2.1-M7") {
         exclude group: 'org.osgi', module: 'org.osgi.core'
