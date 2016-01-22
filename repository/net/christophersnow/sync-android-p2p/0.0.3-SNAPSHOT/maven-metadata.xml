@@ -2,12 +2,12 @@
 <metadata>
   <groupId>net.christophersnow</groupId>
   <artifactId>sync-android-p2p</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20160122.110702</timestamp>
-      <buildNumber>2</buildNumber>
+      <timestamp>20160122.112738</timestamp>
+      <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20160122110702</lastUpdated>
+    <lastUpdated>20160122112738</lastUpdated>
   </versioning>
 </metadata>
