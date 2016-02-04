@@ -4,8 +4,8 @@
   <artifactId>sync-android-p2p</artifactId>
   <versioning>
     <versions>
-      <version>0.0.3-SNAPSHOT</version>
+      <version>0.0.4-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20160125140333</lastUpdated>
+    <lastUpdated>20160204122731</lastUpdated>
   </versioning>
 </metadata>

@@ -70,7 +70,7 @@ android {
   ...
     
   dependencies {
-    compile 'net.christophersnow:sync-android-p2p:0.0.3-SNAPSHOT'
+    compile 'net.christophersnow:sync-android-p2p:0.0.4-SNAPSHOT'
   }
 }
 ```
