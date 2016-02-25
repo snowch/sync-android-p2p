@@ -14,6 +14,7 @@ Expect lots of bugs, this code needs much more testing.
 ```
 git clone https://github.com/snowch/sync-android-p2p
 cd sync-android
+./gradlew test
 ```
 
 ### Using Eclipse

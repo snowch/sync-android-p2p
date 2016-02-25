@@ -74,5 +74,8 @@ defaultTasks 'clean', 'build', 'check'
 
 tasks.withType(Test) {
     systemProperty "sqlite4java.library.path", "./native"
+    testLogging {
+        events 'passed'
+    }
 }
 
