@@ -22,7 +22,7 @@ eclipse {
 allprojects {
 	
     group = 'net.christophersnow'
-    version = '0.0.4-SNAPSHOT'
+    version = '0.0.5-SNAPSHOT'
     description = """cloudant-sync-p2p"""
 
     sourceCompatibility = 1.6
@@ -53,9 +53,9 @@ sourceSets {
 
 
 dependencies {
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'0.15.2')
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version:'0.15.2')
-    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-javase', version:'0.15.2')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-android', version:'0.15.5')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-core', version:'0.15.5')
+    compile(group: 'com.cloudant', name: 'cloudant-sync-datastore-javase', version:'0.15.5')
 
     compile("org.restlet.jse:org.restlet:2.1-M7") {
         exclude group: 'org.osgi', module: 'org.osgi.core'
