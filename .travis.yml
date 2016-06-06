@@ -1,3 +1,0 @@
-language: java
-
-script: ./gradlew clean build test -D-ea -Dsqlite4java.library.path=native
